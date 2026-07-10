@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="16" fill="#6C63FF"/>
+  <!-- Ledger book shape -->
+  <rect x="8" y="7" width="14" height="18" rx="2" fill="#fff" opacity="0.15"/>
+  <rect x="9" y="8" width="12" height="16" rx="1.5" fill="#fff" opacity="0.95"/>
+  <!-- Spine line -->
+  <rect x="11" y="8" width="1.5" height="16" rx="0.75" fill="#6C63FF" opacity="0.4"/>
+  <!-- Lines on ledger -->
+  <rect x="13.5" y="11" width="6" height="1.2" rx="0.6" fill="#6C63FF" opacity="0.5"/>
+  <rect x="13.5" y="13.5" width="4.5" height="1.2" rx="0.6" fill="#6C63FF" opacity="0.4"/>
+  <rect x="13.5" y="16" width="6" height="1.2" rx="0.6" fill="#6C63FF" opacity="0.5"/>
+  <rect x="13.5" y="18.5" width="3.5" height="1.2" rx="0.6" fill="#6C63FF" opacity="0.4"/>
+  <!-- Dollar symbol -->
+  <circle cx="22" cy="22" r="5.5" fill="#00C9A7"/>
+  <text x="22" y="25.5" text-anchor="middle" font-family="Arial" font-size="7" font-weight="bold" fill="#fff">$</text>
+</svg>
