@@ -22,7 +22,9 @@ export default function Dashboard({ onNavigate }) {
   const totalAssets = accounts.filter(a => a.type === 'asset').reduce((s, a) => s + a.balanceCents, 0);
   const openInvoices = invoices.filter(i => i.status === 'sent' || i.status === 'overdue');
   const overdueInvoices = invoices.filter(i => i.status === 'overdue');
+  const paidInvoices = invoices.filter(i => i.status === 'paid');
   const openAmount = openInvoices.reduce((s, i) => s + i.remainingCents, 0);
+  const paidAmount = paidInvoices.reduce((s, i) => s + i.totalCents, 0);
 
   return (
     <div>
@@ -33,29 +35,68 @@ export default function Dashboard({ onNavigate }) {
         </div>
       </div>
       <div className="page">
-        <div className="stats-grid">
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
           <div className="stat-card">
+            <div className="stat-card-accent" style={{ background: 'var(--primary)' }} />
             <div className="stat-label">Total Accounts</div>
             <div className="stat-value">{accounts.length}</div>
-            <div className="stat-change">Active ledger accounts</div>
+            <div className="stat-change neutral">Active ledger accounts</div>
           </div>
           <div className="stat-card">
+            <div className="stat-card-accent" style={{ background: 'var(--accent)' }} />
             <div className="stat-label">Asset Balance</div>
             <div className="stat-value" style={{ fontSize: '20px' }}>{fmt(totalAssets)}</div>
-            <div className="stat-change">Derived from entries</div>
+            <div className="stat-change neutral">Derived from entries</div>
           </div>
           <div className="stat-card">
+            <div className="stat-card-accent" style={{ background: 'var(--yellow)' }} />
+            <div className="stat-label">Ledger Transactions</div>
+            <div className="stat-value">{txns.length}</div>
+            <div className="stat-change neutral">Double-entry records</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-accent" style={{ background: overdueInvoices.length > 0 ? 'var(--red)' : 'var(--green)' }} />
             <div className="stat-label">Open Invoices</div>
             <div className="stat-value">{openInvoices.length}</div>
-            {overdueInvoices.length > 0 && (
-              <div className="stat-change" style={{ color: 'var(--red)' }}>{overdueInvoices.length} overdue</div>
-            )}
+            {overdueInvoices.length > 0
+              ? <div className="stat-change negative">{overdueInvoices.length} overdue</div>
+              : <div className="stat-change neutral">All on time</div>}
           </div>
           <div className="stat-card">
+            <div className="stat-card-accent" style={{ background: 'var(--red)' }} />
             <div className="stat-label">Outstanding AP</div>
             <div className="stat-value" style={{ fontSize: '20px' }}>{fmt(openAmount)}</div>
-            <div className="stat-change">Pending collection</div>
+            <div className="stat-change neutral">Pending collection</div>
           </div>
+          <div className="stat-card">
+            <div className="stat-card-accent" style={{ background: 'var(--green)' }} />
+            <div className="stat-label">Total Paid</div>
+            <div className="stat-value" style={{ fontSize: '20px' }}>{fmt(paidAmount)}</div>
+            <div className="stat-change positive">↑ {paidInvoices.length} invoice{paidInvoices.length !== 1 ? 's' : ''} settled</div>
+          </div>
+        </div>
+
+        <div className="quick-actions-grid">
+          <button className="quick-action-btn" onClick={() => onNavigate('accounts')}>
+            <div className="quick-action-icon">🏦</div>
+            <div className="quick-action-label">New Account</div>
+            <div className="quick-action-desc">Add a ledger account</div>
+          </button>
+          <button className="quick-action-btn" onClick={() => onNavigate('transactions')}>
+            <div className="quick-action-icon">⇄</div>
+            <div className="quick-action-label">Record Transaction</div>
+            <div className="quick-action-desc">Double-entry debit/credit</div>
+          </button>
+          <button className="quick-action-btn" onClick={() => onNavigate('invoices')}>
+            <div className="quick-action-icon">🧾</div>
+            <div className="quick-action-label">Create Invoice</div>
+            <div className="quick-action-desc">AP invoice with line items</div>
+          </button>
+          <button className="quick-action-btn" onClick={() => onNavigate('invoices')}>
+            <div className="quick-action-icon">💳</div>
+            <div className="quick-action-label">Apply Payment</div>
+            <div className="quick-action-desc">Settle open invoices</div>
+          </button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>

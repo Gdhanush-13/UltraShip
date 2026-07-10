@@ -26,7 +26,8 @@ export default function Accounts() {
       setShowModal(false);
       refetch();
     } catch (err) {
-      toast.error(err.message);
+      const msg = err?.graphQLErrors?.[0]?.message || err?.message || 'Error';
+      toast.error(msg);
     }
   }
 

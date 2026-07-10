@@ -4,6 +4,11 @@ A full-stack Accounts Payable payment processing module for a Transportation Man
 
 **Stack:** Node.js · Apollo Server 4 (GraphQL) · sql.js (SQLite WASM) · React 18 · Vite · Apollo Client
 
+**Live Demo:**
+- Frontend → https://ultra-ship-dev.vercel.app
+- Backend API → https://ultraship-ledger-api.onrender.com/graphql
+- Health check → https://ultraship-ledger-api.onrender.com/health
+
 ---
 
 ## How to Run Locally
@@ -17,7 +22,7 @@ cd backend && npm install && npm start
 # 2. Frontend →  http://localhost:3000
 cd frontend && npm install && npm run dev
 
-# 3. Tests (15/15)
+# 3. Tests (25/25)
 cd backend && npm test
 ```
 
@@ -232,7 +237,7 @@ UltraShip/
 │   │   └── db.js           sql.js init, helpers (queryOne/queryAll/run/
 │   │                       execTransaction), file persistence
 │   └── tests/
-│       └── ledger.test.js  Jest — 15 tests (Parts 1, 2, 3)
+│       └── ledger.test.js  Jest — 25 tests (Parts 1, 2, 3 + validation + overdue + integrity)
 │
 └── frontend/
     ├── package.json
@@ -248,7 +253,7 @@ UltraShip/
             ├── Accounts.jsx     Chart of accounts, create modal
             ├── Transactions.jsx Double-entry recorder, full log
             └── Invoices.jsx     Invoice lifecycle, detail panel,
-                                 payment modal (idempotency key input)
+                                 payment modal (auto-generated idempotency key)
 ```
 
 ---
@@ -279,13 +284,40 @@ Every payment carries a caller-supplied `idempotencyKey`. Inside a SQLite transa
 
 ---
 
+## Why There Is No Delete for Accounts or Transactions
+
+This is intentional, not an omission.
+
+- **Transactions are immutable** — deleting a ledger entry breaks the audit trail and makes balances unrecoverable. The correct approach is a *reversal entry* (a new transaction that mirrors the original with swapped debit/credit).
+- **Accounts cannot be deleted** while they hold transaction history — doing so would orphan ledger entries and corrupt balance derivations. The correct approach is *deactivation/archiving* (a future improvement).
+
+Both constraints are standard double-entry accounting practice and intentional design decisions.
+
+---
+
 ## Shortcuts Taken
 
 1. **sql.js (SQLite WASM) over PostgreSQL** — Zero native compilation, zero config. Production would use PostgreSQL with `SELECT ... FOR UPDATE` row locking for true multi-process concurrency.
 2. **No authentication** — No JWT/session layer. Production gates every mutation behind auth middleware.
 3. **No pagination** — All lists return all rows. Real system needs cursor-based pagination.
-4. **No soft-delete / deactivation** — Ledger entries are correctly append-only; accounts/invoices lack a deactivation flow.
-5. **Hardcoded API URL** — Frontend points at `localhost:4000`. Production uses env vars + reverse proxy.
+4. **No soft-delete / deactivation** — Ledger entries are correctly append-only; accounts/invoices lack a deactivation flow (by design — see section above).
+5. **Environment-driven API URL** — Frontend reads `VITE_API_URL` env var; defaults to `localhost:4000` locally.
+
+---
+
+## Improvements Made Beyond Requirements
+
+1. **Backend input validation** — blank names, invalid account types, negative unit prices, zero quantities, same payer/payee all throw clear errors before hitting the DB
+2. **Nested transaction guard** — `execTransaction` detects if already inside a transaction and skips `BEGIN/COMMIT` to avoid SQLite errors
+3. **`saveToFile` only on COMMIT** — `_inTransaction` flag prevents disk writes on every intermediate `run()` inside a transaction
+4. **Pre-populated `lineItems`** — `enrichInvoice` pre-loads line items so the `Invoice.lineItems` resolver never double-queries the DB
+5. **Auto-generated idempotency key** — Payment modal generates `crypto.randomUUID()` on open; user can regenerate or override; "Pay in full" shortcut fills the amount
+6. **Account balance refetch** — Transactions page calls `refetchAccounts()` after recording so balances update immediately
+7. **Multi-origin CORS** — `CORS_ORIGIN` env var accepts comma-separated origins; OPTIONS preflight handled
+8. **sql.js WASM `locateFile`** — Explicit path ensures WASM loads correctly on Render regardless of CWD
+9. **Graceful SIGTERM shutdown** — Backend closes HTTP server cleanly on Render restarts
+10. **Dashboard Quick Actions** — One-click shortcuts to all common tasks; 6 stat cards with colored accent bars
+11. **25 Jest tests** — Input validation, `markOverdueInvoices`, ledger balance integrity (total debits = total credits), double-entry structure per transaction
 
 ---
 
@@ -293,8 +325,9 @@ Every payment carries a caller-supplied `idempotencyKey`. Inside a SQLite transa
 
 1. **PostgreSQL + Prisma** with `SELECT FOR UPDATE` for genuine multi-process concurrent payment safety
 2. **Refund flow** — Reverse a payment with a new double-entry (credit payer, debit payee) keeping the ledger balanced at all times
-3. **Multi-currency** — Fixed exchange rate table; convert at payment time; record FX gain/loss as separate ledger entries
-4. **Webhook event log** — Persist raw webhook payloads before processing; enables replay and dead-letter queue
-5. **Cursor-based pagination + full-text search** on all list views
-6. **E2E tests** with Playwright covering the full invoice payment flow in the browser
-7. **CI/CD** — GitHub Actions: lint → test → build → deploy on every PR
+3. **Account deactivation** — Soft-delete/archive flag so accounts with history can be retired without breaking the ledger
+4. **Multi-currency** — Fixed exchange rate table; convert at payment time; record FX gain/loss as separate ledger entries
+5. **Webhook event log** — Persist raw webhook payloads before processing; enables replay and dead-letter queue
+6. **Cursor-based pagination + full-text search** on all list views
+7. **E2E tests** with Playwright covering the full invoice payment flow in the browser
+8. **CI/CD** — GitHub Actions: lint → test → build → deploy on every PR

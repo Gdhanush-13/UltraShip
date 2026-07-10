@@ -38,7 +38,17 @@ export default function App() {
       <Toaster position="bottom-right" toastOptions={{ style: { background: '#1F2937', color: '#F9FAFB', border: '1px solid #2D3A55' } }} />
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">US</div>
+          <div className="sidebar-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="5" y="4" width="14" height="19" rx="2" fill="white" opacity="0.9"/>
+              <rect x="7" y="5" width="2" height="17" rx="1" fill="#6C63FF" opacity="0.35"/>
+              <rect x="11" y="9" width="6" height="1.5" rx="0.75" fill="#0047FF" opacity="0.5"/>
+              <rect x="11" y="12" width="4.5" height="1.5" rx="0.75" fill="#0047FF" opacity="0.4"/>
+              <rect x="11" y="15" width="6" height="1.5" rx="0.75" fill="#0047FF" opacity="0.5"/>
+              <circle cx="23" cy="23" r="7" fill="#00C2FF"/>
+              <text x="23" y="27" textAnchor="middle" fontFamily="Arial" fontSize="9" fontWeight="bold" fill="white">$</text>
+            </svg>
+          </div>
           <span className="sidebar-logo-text">Ultra<span>Ship</span></span>
         </div>
         <nav className="sidebar-nav">
@@ -59,7 +69,8 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-footer">
-          Payment Ledger v1.0 · TMS Module
+          <div style={{ marginBottom: '4px' }}>Payment Ledger v1.0</div>
+          <div style={{ color: 'var(--text-3)', fontSize: '10px' }}>TMS · Accounts Payable Module</div>
         </div>
       </aside>
 
