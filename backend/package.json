@@ -1,0 +1,32 @@
+{
+  "name": "ultraship-ledger-backend",
+  "version": "1.0.0",
+  "description": "UltraShip Mini Payment Ledger & Invoice Service",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.11.0",
+    "sql.js": "^1.12.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.js"]
+  }
+}
