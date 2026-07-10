@@ -5,8 +5,15 @@ services:
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 4000
       - key: CORS_ORIGIN
         sync: false
+    disk:
+      name: ledger-data
+      mountPath: /opt/render/project/src/backend
+      sizeGB: 1

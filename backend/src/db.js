@@ -18,7 +18,10 @@ function saveToFile() {
 
 async function initDb(inMemory = false) {
   _inMemory = inMemory;
-  const SQL = await initSqlJs();
+  const SQL = await initSqlJs({
+    // Explicit WASM path — required for Render/production where CWD may differ
+    locateFile: file => path.join(path.dirname(require.resolve('sql.js')), file),
+  });
   if (!inMemory && fs.existsSync(DB_FILE)) {
     _db = new SQL.Database(fs.readFileSync(DB_FILE));
   } else {
