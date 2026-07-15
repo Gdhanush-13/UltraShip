@@ -13,7 +13,7 @@ function StatusBadge({ status }) {
 
 const STATUS_TRANSITIONS = { draft: ['sent'], sent: ['overdue'], overdue: [] };
 
-export default function Invoices() {
+export default function Invoices({ onNavigate }) {
   const [showCreate, setShowCreate] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [showPayModal, setShowPayModal] = useState(false);
@@ -141,6 +141,9 @@ export default function Invoices() {
           <div className="topbar-subtitle">Accounts Payable · Draft → Sent → Paid / Overdue</div>
         </div>
         <div className="topbar-actions">
+          <button className="btn btn-secondary" onClick={() => onNavigate('docs')}>
+            <DocsIcon /> Docs
+          </button>
           <button className="btn btn-secondary" onClick={handleMarkOverdue}>Mark Overdue</button>
           <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
             <PlusIcon /> New Invoice
@@ -444,6 +447,17 @@ export default function Invoices() {
   );
 }
 
+function DocsIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <line x1="10" y1="9" x2="8" y2="9"/>
+    </svg>
+  );
+}
 function PlusIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

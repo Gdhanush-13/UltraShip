@@ -82,30 +82,6 @@ export default function App() {
       </aside>
 
       <div className="main-content">
-        {/* Docs shortcut in top-right topbar area */}
-        <div style={{
-          position: 'fixed', top: '12px', right: '20px', zIndex: 200,
-        }}>
-          <button
-            onClick={() => setPage('docs')}
-            style={{
-              background: page === 'docs' ? 'var(--primary)' : 'var(--surface-2)',
-              border: '1px solid var(--border)',
-              borderRadius: '8px',
-              padding: '6px 14px',
-              fontSize: '12.5px',
-              fontWeight: 600,
-              color: page === 'docs' ? '#fff' : 'var(--text-2)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.15s',
-            }}
-          >
-            <IconDocs size={14} /> Docs
-          </button>
-        </div>
         <Page onNavigate={setPage} />
       </div>
     </div>
